@@ -449,13 +449,17 @@ static struct isl29028_platform_data isl29028_pdata = {
 
 static int spade_ts_atmel_power(int on)
 {
-	pr_info("%s():\n", __func__);
-	gpio_set_value(PM8058_GPIO_PM_TO_SYS(SPADE_TP_RSTz), 0);
-	msleep(5);
-	gpio_set_value(SPADE_GPIO_TP_3V3_ENABLE, 1);
-	msleep(5);
-	gpio_set_value(PM8058_GPIO_PM_TO_SYS(SPADE_TP_RSTz), 1);
-	msleep(40);
+	pr_info("%s: %d\n", __func__, on);
+	if (on == 1) {
+		gpio_set_value(SPADE_GPIO_TP_3V3_ENABLE, 1);
+		msleep(5);
+		gpio_set_value(PM8058_GPIO_PM_TO_SYS(SPADE_TP_RSTz), 1);
+	} else if (on == 2) {
+		gpio_set_value(PM8058_GPIO_PM_TO_SYS(SPADE_TP_RSTz), 0);
+		msleep(5);
+		gpio_set_value(PM8058_GPIO_PM_TO_SYS(SPADE_TP_RSTz), 1);
+		msleep(40);
+	}
 	return 0;
 }
 
@@ -474,8 +478,8 @@ struct atmel_i2c_platform_data spade_ts_atmel_data[] = {
 		.power = spade_ts_atmel_power,
 		.config_T6 = {0, 0, 0, 0, 0, 0},
 		.config_T7 = {50, 15, 25},
-		.config_T8 = {8, 0, 10, 10, 0, 0, 10, 30, 4, 170},
-		.config_T9 = {139, 0, 0, 19, 11, 0, 16, 42, 3, 7, 10, 10, 5, 15, 4, 10, 20, 0, 0, 0, 0, 0, 0, 2, 6, 6, 162, 40, 168, 70, 20, 4},
+		.config_T8 = {8, 0, 10, 10, 0, 0, 10, 32, 4, 170},
+		.config_T9 = {139, 0, 0, 19, 11, 0, 16, 35, 3, 7, 10, 10, 5, 15, 4, 10, 20, 0, 0, 0, 0, 0, 0, 2, 6, 6, 162, 40, 168, 70, 20, 4},
 		.config_T15 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.config_T19 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.config_T20 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -485,8 +489,8 @@ struct atmel_i2c_platform_data spade_ts_atmel_data[] = {
 		.config_T25 = {3, 0, 200, 50, 64, 31, 0, 0, 0, 0, 0, 0, 0, 0},
 		.config_T27 = {0, 0, 0, 0, 0, 0, 0},
 		.config_T28 = {0, 0, 3, 4, 8, 60},
-		.object_crc = {0x29, 0xFB, 0xB1},
-		.cable_config = {40, 20, 8, 16},
+		.object_crc = {0xCD, 0xD7, 0xF6 },
+		.cable_config = {35, 20, 8, 16},
 		.noise_config = {45, 2, 40},
 		.GCAF_level = {20, 24, 28, 40, 63},
 	},
@@ -508,7 +512,6 @@ struct atmel_i2c_platform_data spade_ts_atmel_data[] = {
 		.config_T9 = {139, 0, 0, 19, 11, 0, 16, 30, 3, 7, 10, 10, 5, 15, 4, 10, 20, 0, 0, 0, 0, 0, 8, 2, 6, 6, 162, 40, 168, 70, 20},
 		.config_T15 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.config_T19 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-/*		.config_T20 = {7, 0, 0, 0, 0, 0, 0, 40, 20, 4, 15, 0}, */
 		.config_T22 = {15, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 7, 18, 255, 255, 0},
 		.config_T23 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.config_T24 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
