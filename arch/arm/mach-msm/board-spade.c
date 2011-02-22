@@ -547,6 +547,7 @@ static struct synaptics_i2c_rmi_platform_data spade_ts_3k_data[] = {
 		.abs_y_max = 1900,
 		.sensitivity_adjust = 0,
 		.finger_support = 4,
+		.display_height = 800,
 	},
 	{
 		.version = 0x0100,
@@ -558,6 +559,7 @@ static struct synaptics_i2c_rmi_platform_data spade_ts_3k_data[] = {
 		.abs_y_max = 1900,
 		.sensitivity_adjust = 0,
 		.finger_support = 4,
+		.display_height = 800,
 	}
 };
 
