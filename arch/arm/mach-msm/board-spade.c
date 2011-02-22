@@ -31,7 +31,6 @@
 #include <linux/isl29028.h>
 #include <linux/atmel_qt602240.h>
 #include <linux/synaptics_i2c_rmi.h>
-#include <linux/elan_ktf2k.h>
 #include <linux/leds-pm8058.h>
 #include <linux/proc_fs.h>
 #include <linux/ds2746_battery.h>
@@ -578,33 +577,6 @@ static struct synaptics_i2c_rmi_platform_data spade_ts_3k_data[] = {
 	}
 };
 
-static int spade_elan_ktf2k_ts_power(int on)
-{
-	pr_info("%s: power %d\n", __func__, on);
-
-	if (on) {
-		gpio_set_value(SPADE_GPIO_TP_3V3_ENABLE, 1);
-		msleep(300);
-	} else {
-		gpio_set_value(SPADE_GPIO_TP_3V3_ENABLE, 0);
-		udelay(11);
-	}
-
-	return 0;
-}
-
-struct elan_ktf2k_i2c_platform_data spade_ts_elan_ktf2k_data[] = {
-	{
-		.version = 0x0021,
-		.abs_x_min = 5,
-		.abs_x_max = 635,
-		.abs_y_min = 10,
-		.abs_y_max = 1100,
-		.intr_gpio = SPADE_GPIO_TP_ATT_N,
-		.power = spade_elan_ktf2k_ts_power,
-	},
-};
-
 static struct i2c_board_info i2c_devices[] = {
 	{
 		I2C_BOARD_INFO(ATMEL_QT602240_NAME, 0x94 >> 1),
@@ -615,11 +587,6 @@ static struct i2c_board_info i2c_devices[] = {
 		I2C_BOARD_INFO(SYNAPTICS_3K_NAME, 0x20),
 		.platform_data = &spade_ts_3k_data,
 		.irq = MSM_GPIO_TO_INT(SPADE_GPIO_TP_ATT_N)
-	},
-	{
-		I2C_BOARD_INFO(ELAN_KTF2K_NAME, 0x15),
-		.platform_data = &spade_ts_elan_ktf2k_data,
-		.irq = MSM_GPIO_TO_INT(SPADE_GPIO_TP_ATT_N),
 	},
 	{
 		I2C_BOARD_INFO(MICROP_I2C_NAME, 0xCC >> 1),
@@ -2046,14 +2013,6 @@ static ssize_t spade_virtual_keys_show(struct kobject *kobj,
 		"\n");
 }
 
-static struct kobj_attribute spade_elan_virtual_keys_attr = {
-	.attr = {
-		.name = "virtualkeys.elan-touchscreen",
-		.mode = S_IRUGO,
-	},
-	.show = &spade_virtual_keys_show,
-};
-
 static struct kobj_attribute spade_synaptics_virtual_keys_attr = {
 	.attr = {
 		.name = "virtualkeys.synaptics-rmi-touchscreen",
@@ -2071,7 +2030,6 @@ static struct kobj_attribute spade_virtual_keys_attr = {
 };
 
 static struct attribute *spade_properties_attrs[] = {
-	&spade_elan_virtual_keys_attr.attr,
 	&spade_synaptics_virtual_keys_attr.attr,
 	&spade_virtual_keys_attr.attr,
 	NULL
