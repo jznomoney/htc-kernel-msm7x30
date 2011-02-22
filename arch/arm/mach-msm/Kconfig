@@ -508,6 +508,13 @@ config MSM_SPM
 	help
 	   Enables support for the subsystem power manager.
 
+config HTC_VOICE_DUALMIC
+	tristate "HTC Dualmic functionality"
+	depends on (ARCH_MSM7X30)
+	default n
+	help
+	  Enable dual-mic functinality to do noise suppresion during voice call.
+
 config SMEM_RPC_SERVER_STATE
 	default n
 	bool "Set RPC Server State in SMEM"
