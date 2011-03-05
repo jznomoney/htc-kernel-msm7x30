@@ -133,22 +133,21 @@ static struct clkctl_acpu_speed acpu_freq_tbl[] = {
 	{ 184320, PLL_3,    5, 4,  61440,  900, VDD_RAW(900) },
 	{ MAX_AXI_KHZ, SRC_AXI, 1, 0, 61440, 900, VDD_RAW(900) },
 	{ 245760, PLL_3,    5, 2,  61440,  900, VDD_RAW(900) },
-	{ 368640, PLL_3,    5, 1,  122800, 900, VDD_RAW(900) },
-	{ 768000, PLL_1,    2, 0,  153600, 1050, VDD_RAW(1050) },
+	{ 368640, PLL_3,    5, 1,  122800, 950, VDD_RAW(950) },
+	{ 768000, PLL_1,    2, 0,  153600, 1025, VDD_RAW(1025) },
 	/* Make sure any freq based from PLL_2 is a multiple of 19200! 
 	   Voltage tables are being very conservative and are not designed to
 	   be an undervolt of any sort. */
 #if defined(CONFIG_MACH_SPADE) || defined(CONFIG_MACH_GLACIER)
-	{ 1017600, PLL_2,   3, 0,  192000, 1100, VDD_RAW(1100) },
+	{ 1017600, PLL_2,   3, 0,  192000, 1075, VDD_RAW(1075) },
 #else
-	{ 806400, PLL_2,    3, 0,  192000, 1100, VDD_RAW(1100) },
-	{ 1017600, PLL_2,   3, 0,  192000, 1200, VDD_RAW(1200) },
+	{ 806400, PLL_2,    3, 0,  192000, 1050, VDD_RAW(1050) },
+	{ 1017600, PLL_2,   3, 0,  192000, 1075, VDD_RAW(1075) },
 #endif
-	{ 1113600, PLL_2,   3, 0,  192000, 1200, VDD_RAW(1200) },
-	{ 1209600, PLL_2,   3, 0,  192000, 1200, VDD_RAW(1200) },
+	{ 1113600, PLL_2,   3, 0,  192000, 1100, VDD_RAW(1100) },
+	{ 1209600, PLL_2,   3, 0,  192000, 1150, VDD_RAW(1150) },
 	{ 1305600, PLL_2,   3, 0,  192000, 1200, VDD_RAW(1200) },
 	{ 1401600, PLL_2,   3, 0,  192000, 1300, VDD_RAW(1300) },
-	{ 1497600, PLL_2,   3, 0,  192000, 1300, VDD_RAW(1300) },
 	{ 1516800, PLL_2,   3, 0,  192000, 1300, VDD_RAW(1300) },
 #ifdef CONFIG_JESUS_PHONE
 	{ 1612800, PLL_2,   3, 0,  192000, 1400, VDD_RAW(1400) },
