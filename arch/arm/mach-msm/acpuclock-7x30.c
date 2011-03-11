@@ -89,7 +89,24 @@ static struct cpufreq_frequency_table freq_table[] = {
 	{ 5, 1209600 },
 	{ 6, 1305600 },
 	{ 7, 1401600 },
-	{ 8, 1497600 },
+	{ 8, 1516800 },
+#ifndef CONFIG_JESUS_PHONE
+	{ 9, CPUFREQ_TABLE_END },
+#else
+	/* Just an example of some of the insanity I was able to pull off on my
+	   device */
+	{ 9, 1612800 },
+	{ 10, 1708800 },
+	{ 11, 1804800 },
+	{ 12, CPUFREQ_TABLE_END },
+#endif
+#else
+	{ 3, 806400 },
+	{ 4, 1017600 },
+	{ 5, 1113600 },
+	{ 6, 1209600 },
+	{ 7, 1305600 },
+	{ 8, 1401600 },
 	{ 9, 1516800 },
 #ifndef CONFIG_JESUS_PHONE
 	{ 10, CPUFREQ_TABLE_END },
@@ -101,25 +118,6 @@ static struct cpufreq_frequency_table freq_table[] = {
 	{ 12, 1804800 },
 	{ 13, CPUFREQ_TABLE_END },
 #endif
-#else
-	{ 3, 806400 },
-	{ 4, 1017600 },
-	{ 5, 1113600 },
-	{ 6, 1209600 },
-	{ 7, 1305600 },
-	{ 8, 1401600 },
-	{ 9, 1497600 },
-	{ 10, 1516800 },
-#ifndef CONFIG_JESUS_PHONE
-	{ 11, CPUFREQ_TABLE_END },
-#else
-	/* Just an example of some of the insanity I was able to pull off on my
-	   device */
-	{ 11, 1612800 },
-	{ 12, 1708800 },
-	{ 13, 1804800 },
-	{ 14, CPUFREQ_TABLE_END },
-#endif
 #endif
 };
 
@@ -127,7 +125,7 @@ static struct cpufreq_frequency_table freq_table[] = {
 #define SRC_LPXO (-2)
 #define SRC_AXI  (-1)
 static struct clkctl_acpu_speed acpu_freq_tbl[] = {
-	{ 24576,  SRC_LPXO, 0, 0,  30720,  900, VDD_RAW(850) },
+	{ 24576,  SRC_LPXO, 0, 0,  30720,  850, VDD_RAW(850) },
 	{ 61440,  PLL_3,    5, 11, 61440,  900, VDD_RAW(900) },
 	{ 122880, PLL_3,    5, 5,  61440,  900, VDD_RAW(900) },
 	{ 184320, PLL_3,    5, 4,  61440,  900, VDD_RAW(900) },
