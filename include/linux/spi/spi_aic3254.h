@@ -24,6 +24,11 @@ typedef struct _CODEC_SPI_CMD {
 	unsigned char data;
 } CODEC_SPI_CMD;
 
+typedef struct _CODEC_SPI_CMD_PARAM {
+	CODEC_SPI_CMD *data;
+	unsigned int len;
+} CODEC_SPI_CMD_PARAM;
+
 struct AIC3254_PARAM {
 	unsigned int row_num;
 	unsigned int col_num;
@@ -47,6 +52,7 @@ struct CODEC_CFG {
 #define AIC3254_CONFIG_VOLUME_L  _IOW(AIC3254_IOCTL_MAGIC, 0x23, unsigned int)
 #define AIC3254_CONFIG_VOLUME_R  _IOW(AIC3254_IOCTL_MAGIC, 0x24, unsigned int)
 #define AIC3254_POWERDOWN        _IOW(AIC3254_IOCTL_MAGIC, 0x25, unsigned int)
+#define AIC3254_LOOPBACK         _IOW(AIC3254_IOCTL_MAGIC, 0x26, unsigned int)
 #define AIC3254_DUMP_PAGES       _IOW(AIC3254_IOCTL_MAGIC, 0x30, unsigned int)
 #define AIC3254_READ_REG         _IOWR(AIC3254_IOCTL_MAGIC, 0x31, unsigned)
 #define AIC3254_WRITE_REG        _IOW(AIC3254_IOCTL_MAGIC, 0x32, unsigned)
@@ -85,7 +91,23 @@ struct aic3254_ctl_ops {
 	void (*tx_amp_enable)(int en);
 	void (*rx_amp_enable)(int en);
 	int (*panel_sleep_in)(void);
+	CODEC_SPI_CMD_PARAM *downlink_off;
+	CODEC_SPI_CMD_PARAM *uplink_off;
+	CODEC_SPI_CMD_PARAM *downlink_on;
+	CODEC_SPI_CMD_PARAM *uplink_on;
+	CODEC_SPI_CMD_PARAM *lb_dsp_init;
+	CODEC_SPI_CMD_PARAM *lb_downlink_receiver;
+	CODEC_SPI_CMD_PARAM *lb_downlink_speaker;
+	CODEC_SPI_CMD_PARAM *lb_downlink_headset;
+	CODEC_SPI_CMD_PARAM *lb_uplink_imic;
+	CODEC_SPI_CMD_PARAM *lb_uplink_emic;
+	CODEC_SPI_CMD_PARAM *lb_receiver_imic;
+	CODEC_SPI_CMD_PARAM *lb_speaker_imic;
+	CODEC_SPI_CMD_PARAM *lb_headset_emic;
+	CODEC_SPI_CMD_PARAM *lb_headset_bmic;
 };
 
 void aic3254_register_ctl_ops(struct aic3254_ctl_ops *ops);
+void aic3254_set_mic_bias(int en);
 #endif /* __SPI_AIC3254_H__*/
+

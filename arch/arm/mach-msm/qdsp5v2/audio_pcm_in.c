@@ -16,7 +16,6 @@
  *
  */
 
-#include <mach/debug_audio_mm.h>
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <linux/miscdevice.h>
@@ -34,6 +33,7 @@
 #include <mach/qdsp5v2/qdsp5audrecmsg.h>
 #include <mach/qdsp5v2/audpreproc.h>
 #include <mach/qdsp5v2/audio_dev_ctl.h>
+#include <mach/debug_mm.h>
 
 /* FRAME_NUM must be a power of two */
 #define FRAME_NUM		(8)
@@ -74,6 +74,7 @@ struct audio_in {
 	uint32_t in_head; /* next buffer dsp will write */
 	uint32_t in_tail; /* next buffer read() will read */
 	uint32_t in_count; /* number of buffers available to read() */
+	uint32_t mode;
 
 	const char *module_name;
 	unsigned queue_ids;
@@ -366,6 +367,18 @@ static int audpcm_in_record_config(struct audio_in *audio, int enable)
 		cmd.destination_activity = AUDIO_RECORDING_TURN_OFF;
 
 	cmd.source_mix_mask = audio->source;
+	if (audio->enc_id == 2) {
+		if ((cmd.source_mix_mask &
+				INTERNAL_CODEC_TX_SOURCE_MIX_MASK) ||
+			(cmd.source_mix_mask & AUX_CODEC_TX_SOURCE_MIX_MASK) ||
+			(cmd.source_mix_mask & VOICE_UL_SOURCE_MIX_MASK) ||
+			(cmd.source_mix_mask & VOICE_DL_SOURCE_MIX_MASK)) {
+			cmd.pipe_id = SOURCE_PIPE_1;
+		}
+		if (cmd.source_mix_mask &
+				AUDPP_A2DP_PIPE_SOURCE_MIX_MASK)
+			cmd.pipe_id |= SOURCE_PIPE_0;
+	}
 
 	return audpreproc_send_audreccmdqueue(&cmd, sizeof(cmd));
 }
@@ -510,6 +523,7 @@ static long audpcm_in_ioctl(struct file *file,
 			else
 				rc = 0;
 		}
+		audio->stopped = 0;
 		break;
 	}
 	case AUDIO_STOP: {
@@ -543,17 +557,16 @@ static long audpcm_in_ioctl(struct file *file,
 		}
 		if (cfg.channel_count == 1) {
 			cfg.channel_count = AUDREC_CMD_MODE_MONO;
+			audio->buffer_size = MONO_DATA_SIZE;
 		} else if (cfg.channel_count == 2) {
 			cfg.channel_count = AUDREC_CMD_MODE_STEREO;
+			audio->buffer_size = STEREO_DATA_SIZE;
 		} else {
 			rc = -EINVAL;
 			break;
 		}
 		audio->samp_rate = cfg.sample_rate;
 		audio->channel_mode = cfg.channel_count;
-		audio->buffer_size =
-				audio->channel_mode ? STEREO_DATA_SIZE : \
-					MONO_DATA_SIZE;
 		break;
 	}
 	case AUDIO_GET_CONFIG: {
@@ -694,7 +707,7 @@ static int audpcm_in_open(struct inode *inode, struct file *file)
 	audio->channel_mode = AUDREC_CMD_MODE_MONO;
 	audio->buffer_size = MONO_DATA_SIZE;
 	audio->samp_rate = 8000;
-	audio->enc_type = ENC_TYPE_WAV;
+	audio->enc_type = ENC_TYPE_WAV | audio->mode;
 	audio->source = INTERNAL_CODEC_TX_SOURCE_MIX_MASK;
 
 	encid = audpreproc_aenc_alloc(audio->enc_type, &audio->module_name,
