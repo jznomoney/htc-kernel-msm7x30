@@ -312,4 +312,3 @@ static CODEC_SPI_CMD CODEC_MICBIAS_OFF[] = {
 };
 
 #endif /* __SPI_AIC3254_REG_H__*/
-
